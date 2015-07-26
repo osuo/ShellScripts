@@ -7,8 +7,16 @@
 #
 function usage(){
   echo "usage..."
-  echo "  $0 <target dir> <archive dir>"
+  echo "  $0 [option] <target dir> <archive dir>"
+  echo "  [option]"
+  echo "  -silent : サイレントモード。途中で確認しない。"
 }
+
+#
+if [ "$1" = "-silent" ] ; then
+  silent=y
+  shift
+fi
 
 #
 if [ "$#" -ne 2 ] ; then
@@ -28,8 +36,12 @@ echo "Target Directory : $target_dir"
 echo "Archive Directory : $archive_dir"
 
 #
-echo -n "RESET local Git Repositories ? [y/n] (default 'n') : "
-read confimation
+if [ "$silent" != "y" ] ; then
+  echo -n "RESET local Git Repositories ? [y/n] (default 'n') : "
+  read confimation
+else
+  confimation=y
+fi
 if [ "$confimation" != "y" ] ; then
   echo "bye."
   exit 0
@@ -44,7 +56,7 @@ done
 echo
 
 #
-for repo in `ls $archive_dir/*.tgz` ; do 
+for repo in `ls $archive_dir/*git.tgz` ; do 
   echo "EXPAND $repo ..."
   tar xf $repo -C $target_dir
 done
